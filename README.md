@@ -29,5 +29,5 @@ Traders' operational data, enabling clean and structured data for business use.
 ---
 
 ## License
-This project is licensed under the [MIT License]
+This project is licensed under the MIT License. You are free to use, modify, and share this project with proper attribution.
 
