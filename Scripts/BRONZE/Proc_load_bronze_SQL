@@ -1,0 +1,181 @@
+/*
+==============================================================================
+Stored Procedure: Load Bronze Layer (Source -> Bronze)
+==============================================================================
+Script Purpose:
+    This stored procedure loads data into the 'bronze' schema directly
+    from the Northwind source database. It performs the following actions:
+    - Truncates the bronze tables before loading data.
+    - Uses INSERT INTO ... SELECT to load data from Northwind source
+      tables into bronze tables.
+
+Parameters:
+    None.
+    This stored procedure does not accept any parameters or return any values.
+
+Usage Example:
+    EXEC Bronze.load_Bronze;
+==============================================================================
+*/
+CREATE OR ALTER PROCEDURE Bronze.load_Bronze AS
+BEGIN
+    DECLARE @start_time       DATETIME;
+    DECLARE @end_time         DATETIME;
+    DECLARE @batch_start_time DATETIME;
+    DECLARE @batch_end_time   DATETIME;
+
+    BEGIN TRY
+
+        SET @batch_start_time = GETDATE();
+
+        PRINT '=========================================';
+        PRINT 'Loading Bronze Layer';
+        PRINT '=========================================';
+
+        PRINT '-----------------------------------------';
+        PRINT 'Loading Northwind Tables';
+        PRINT '-----------------------------------------';
+
+        SET @start_time = GETDATE();
+        PRINT '>> Truncating Table: bronze.northwind_Employees';
+        TRUNCATE TABLE bronze.northwind_Employees;
+        PRINT '>> Inserting Data Into: bronze.northwind_Employees';
+        INSERT INTO bronze.northwind_Employees (
+            employee_id, last_name, first_name, title, title_of_courtesy,
+            birth_date, hire_date, address, city, region, postal_code,
+            country, home_phone, extension, photo, notes, reports_to, photo_path
+        )
+        SELECT
+            EmployeeID, LastName, FirstName, Title, TitleOfCourtesy,
+            BirthDate, HireDate, Address, City, Region, PostalCode,
+            Country, HomePhone, Extension, Photo, Notes, ReportsTo, PhotoPath
+        FROM Northwind.dbo.Employees;
+        SET @end_time = GETDATE();
+        PRINT '>> Duration: ' + CAST(DATEDIFF(SECOND, @start_time, @end_time) AS NVARCHAR) + ' seconds';
+        PRINT '>>>-------------------------------------------------------------------------------------';
+
+        SET @start_time = GETDATE();
+        PRINT '>> Truncating Table: bronze.northwind_Categories';
+        TRUNCATE TABLE bronze.northwind_Categories;
+        PRINT '>> Inserting Data Into: bronze.northwind_Categories';
+        INSERT INTO bronze.northwind_Categories (
+            category_id, category_name, description, picture
+        )
+        SELECT
+            CategoryID, CategoryName, Description, Picture
+        FROM Northwind.dbo.Categories;
+        SET @end_time = GETDATE();
+        PRINT '>> Duration: ' + CAST(DATEDIFF(SECOND, @start_time, @end_time) AS NVARCHAR) + ' seconds';
+        PRINT '>>>-------------------------------------------------------------------------------------';
+
+        SET @start_time = GETDATE();
+        PRINT '>> Truncating Table: bronze.northwind_Customers';
+        TRUNCATE TABLE bronze.northwind_Customers;
+        PRINT '>> Inserting Data Into: bronze.northwind_Customers';
+        INSERT INTO bronze.northwind_Customers (
+            customer_id, company_name, contact_name, contact_title,
+            address, city, region, postal_code, country, phone, fax
+        )
+        SELECT
+            CustomerID, CompanyName, ContactName, ContactTitle,
+            Address, City, Region, PostalCode, Country, Phone, Fax
+        FROM Northwind.dbo.Customers;
+        SET @end_time = GETDATE();
+        PRINT '>> Duration: ' + CAST(DATEDIFF(SECOND, @start_time, @end_time) AS NVARCHAR) + ' seconds';
+        PRINT '>>>-------------------------------------------------------------------------------------';
+
+        SET @start_time = GETDATE();
+        PRINT '>> Truncating Table: bronze.northwind_Shippers';
+        TRUNCATE TABLE bronze.northwind_Shippers;
+        PRINT '>> Inserting Data Into: bronze.northwind_Shippers';
+        INSERT INTO bronze.northwind_Shippers (
+            shipper_id, company_name, phone
+        )
+        SELECT
+            ShipperID, CompanyName, Phone
+        FROM Northwind.dbo.Shippers;
+        SET @end_time = GETDATE();
+        PRINT '>> Duration: ' + CAST(DATEDIFF(SECOND, @start_time, @end_time) AS NVARCHAR) + ' seconds';
+        PRINT '>>>-------------------------------------------------------------------------------------';
+
+        SET @start_time = GETDATE();
+        PRINT '>> Truncating Table: bronze.northwind_Suppliers';
+        TRUNCATE TABLE bronze.northwind_Suppliers;
+        PRINT '>> Inserting Data Into: bronze.northwind_Suppliers';
+        INSERT INTO bronze.northwind_Suppliers (
+            supplier_id, company_name, contact_name, contact_title,
+            address, city, region, postal_code, country, phone, fax, home_page
+        )
+        SELECT
+            SupplierID, CompanyName, ContactName, ContactTitle,
+            Address, City, Region, PostalCode, Country, Phone, Fax, HomePage
+        FROM Northwind.dbo.Suppliers;
+        SET @end_time = GETDATE();
+        PRINT '>> Duration: ' + CAST(DATEDIFF(SECOND, @start_time, @end_time) AS NVARCHAR) + ' seconds';
+        PRINT '>>>-------------------------------------------------------------------------------------';
+
+        SET @start_time = GETDATE();
+        PRINT '>> Truncating Table: bronze.northwind_Orders';
+        TRUNCATE TABLE bronze.northwind_Orders;
+        PRINT '>> Inserting Data Into: bronze.northwind_Orders';
+        INSERT INTO bronze.northwind_Orders (
+            order_id, customer_id, employee_id, order_date, required_date,
+            shipped_date, ship_via, freight, ship_name, ship_address,
+            ship_city, ship_region, ship_postal_code, ship_country
+        )
+        SELECT
+            OrderID, CustomerID, EmployeeID, OrderDate, RequiredDate,
+            ShippedDate, ShipVia, Freight, ShipName, ShipAddress,
+            ShipCity, ShipRegion, ShipPostalCode, ShipCountry
+        FROM Northwind.dbo.Orders;
+        SET @end_time = GETDATE();
+        PRINT '>> Duration: ' + CAST(DATEDIFF(SECOND, @start_time, @end_time) AS NVARCHAR) + ' seconds';
+        PRINT '>>>-------------------------------------------------------------------------------------';
+
+        SET @start_time = GETDATE();
+        PRINT '>> Truncating Table: bronze.northwind_Products';
+        TRUNCATE TABLE bronze.northwind_Products;
+        PRINT '>> Inserting Data Into: bronze.northwind_Products';
+        INSERT INTO bronze.northwind_Products (
+            product_id, product_name, supplier_id, category_id, quantity_perunit,
+            unit_price, units_in_tock, units_on_order, reorder_level, discontinued
+        )
+        SELECT
+            ProductID, ProductName, SupplierID, CategoryID, QuantityPerUnit,
+            UnitPrice, UnitsInStock, UnitsOnOrder, ReorderLevel, Discontinued
+        FROM Northwind.dbo.Products;
+        SET @end_time = GETDATE();
+        PRINT '>> Duration: ' + CAST(DATEDIFF(SECOND, @start_time, @end_time) AS NVARCHAR) + ' seconds';
+        PRINT '>>>-------------------------------------------------------------------------------------';
+
+        SET @start_time = GETDATE();
+        PRINT '>> Truncating Table: bronze.northwind_OrderDetails';
+        TRUNCATE TABLE bronze.northwind_OrderDetails;
+        PRINT '>> Inserting Data Into: bronze.northwind_OrderDetails';
+        INSERT INTO bronze.northwind_OrderDetails (
+            order_id, product_id, unit_price, quantity, discount
+        )
+        SELECT
+            OrderID, ProductID, UnitPrice, Quantity, Discount
+        FROM Northwind.dbo.[Order Details];
+        SET @end_time = GETDATE();
+        PRINT '>> Duration: ' + CAST(DATEDIFF(SECOND, @start_time, @end_time) AS NVARCHAR) + ' seconds';
+        PRINT '>>>-------------------------------------------------------------------------------------';
+
+        SET @batch_end_time = GETDATE();
+        PRINT '=========================================';
+        PRINT 'Loading Bronze Layer is Completed';
+        PRINT '   - Total Load Duration: ' + CAST(DATEDIFF(SECOND, @batch_start_time, @batch_end_time) AS NVARCHAR) + ' seconds';
+        PRINT '=========================================';
+
+    END TRY
+    BEGIN CATCH
+        PRINT '======================================================================================';
+        PRINT 'ERROR OCCURED DURING LOADING A BRONZE LAYER';
+        PRINT 'ERROR MESSAGE: ' + ERROR_MESSAGE();
+        PRINT 'ERROR NUMBER:  ' + CAST(ERROR_NUMBER() AS NVARCHAR);
+        PRINT 'ERROR STATE:   ' + CAST(ERROR_STATE() AS NVARCHAR);
+        PRINT '======================================================================================';
+    END CATCH
+
+END
