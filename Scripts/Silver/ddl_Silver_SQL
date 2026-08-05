@@ -1,0 +1,125 @@
+/*
+=============================================================
+DDL Script: Create Silver Tables
+=============================================================
+
+Script Purpose:
+    This script creates tables in the 'silver' schema, dropping 
+    existing tables if they already exist.
+    Run this script to re-define the DDL structure of 'silver' Tables
+
+=============================================================
+*/
+
+-- ============================================================
+--  silver LAYER - TABLE DEFINITIONS
+-- ============================================================
+  if OBJECT_ID ('Silver.northwind_Employees','U') IS NOT NULL
+Drop table Silver.northwind_Employees;
+CREATE TABLE Silver.northwind_Employees (
+    employee_id INT,
+    last_name NVARCHAR(20),
+    first_name NVARCHAR(10),
+    title NVARCHAR(30),
+    title_Of_courtesy NVARCHAR(25),
+    birth_date DATE,
+    hire_date DATE,
+    "address" NVARCHAR(60),
+    city NVARCHAR(15),
+    region NVARCHAR(15),
+    postal_code NVARCHAR(10),
+    country NVARCHAR(15),
+    home_phone NVARCHAR(24),
+    extension NVARCHAR(4),
+    photo IMAGE,
+    notes NTEXT,
+    reports_to INT,
+    photo_path NVARCHAR(255)
+);
+if OBJECT_ID ('Silver.northwind_Categories','U') IS NOT NULL
+Drop table Silver.northwind_Categories;
+CREATE TABLE Silver.northwind_Categories (
+    category_id INT,
+    category_name NVARCHAR(15),
+    "Description" NTEXT,
+    picture IMAGE
+);
+if OBJECT_ID ('Silver.northwind_Customers','U') IS NOT NULL
+Drop table Silver.northwind_Customers;
+CREATE TABLE Silver.northwind_Customers (
+    customer_id NCHAR(5),
+    company_name NVARCHAR(40),
+    contact_name NVARCHAR(30),
+    contact_title NVARCHAR(30),
+    "address" NVARCHAR(60),
+    city NVARCHAR(15),
+    region NVARCHAR(15),
+    postal_code NVARCHAR(10),
+    country NVARCHAR(15),
+    phone NVARCHAR(24),
+    fax NVARCHAR(24)
+);
+if OBJECT_ID ('Silver.northwind_Shippers','U') IS NOT NULL
+Drop table Silver.northwind_Shippers;
+CREATE TABLE Silver.northwind_Shippers (
+    shipper_id INT,
+    company_name NVARCHAR(40),
+    phone NVARCHAR(24)
+);
+if OBJECT_ID ('Silver.northwind_Suppliers','U') IS NOT NULL
+Drop table Silver.northwind_Suppliers;
+CREATE TABLE Silver.northwind_Suppliers (
+    supplier_id INT,
+    company_name NVARCHAR(40),
+    contact_name NVARCHAR(30),
+    contact_title NVARCHAR(30),
+    "address" NVARCHAR(60),
+    city NVARCHAR(15),
+    region NVARCHAR(15),
+    postal_code NVARCHAR(10),
+    country NVARCHAR(15),
+    phone NVARCHAR(24),
+    fax NVARCHAR(24),
+    home_page NTEXT
+);
+if OBJECT_ID ('Silver.northwind_Orders','U') IS NOT NULL
+Drop table Silver.northwind_Orders;
+CREATE TABLE Silver.northwind_Orders (
+    order_ID INT,
+    customer_ID NCHAR(5),
+    employee_ID INT,
+    order_date DATETIME,
+    required_date DATE,
+    shipped_date DATE,
+    ship_via INT,
+    freight MONEY,
+    ship_name NVARCHAR(40),
+    ship_address NVARCHAR(60),
+    ship_city NVARCHAR(15),
+    ship_region NVARCHAR(15),
+    ship_postal_code NVARCHAR(10),
+    ship_country NVARCHAR(15)
+);
+if OBJECT_ID ('Silver.northwind_Products','U') IS NOT NULL
+Drop table Silver.northwind_Products;
+CREATE TABLE Silver.northwind_Products (
+    product_id INT,
+    product_name NVARCHAR(40),
+    supplier_id INT,
+    category_id INT,
+    quantity_perunit NVARCHAR(20),
+    unit_price MONEY,
+    units_in_tock SMALLINT,
+    units_on_order SMALLINT,
+    reorder_level SMALLINT,
+    discontinued BIT 
+);
+if OBJECT_ID ('Silver.northwind_OrderDetails','U') IS NOT NULL
+Drop table Silver.northwind_OrderDetails;
+CREATE TABLE Silver.northwind_OrderDetails (
+    order_id INT,
+    product_id INT,
+    unit_price MONEY,
+    quantity SMALLINT,
+    discount REAL
+);
